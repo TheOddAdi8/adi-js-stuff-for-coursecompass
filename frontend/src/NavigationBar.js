@@ -30,6 +30,16 @@ function NavigationBar() {
                     href="/data-test"
                     rel="noopener noreferrer"
                 >Data Testing</a>
+                <a
+                    className="Course-info-link"
+                    href="/course-info"
+                    rel="noopener noreferrer"
+                >Course Info</a>
+                <a
+                    className="Edit-course-link"
+                    href="/edit-course"
+                    rel="noopener noreferrer"
+                >Edit Course</a>
                 <button id="btn" className="Log-out" onClick={confirmation}>Log out</button>
                 {/* <input type="text" className="Search-bar" placeholder="Search..."/> */}
             </header>
