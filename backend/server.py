@@ -53,13 +53,15 @@ def search():
     # preparing a cursor object
     cursor = dataBase.cursor()
     # Use dataBase.commit() when creating tables or inserting into tables
-    cursor.execute("""SELECT * FROM teacherName WHERE teacherName=%s""", teacher)
+    statement = "SELECT * FROM teacherName WHERE teacherName='" + teacher + "'"
+    cursor.execute(statement)
     result = cursor.fetchall()
 
     for i in result:
         print(i)
     # Disconnecting from the server
     dataBase.close()
+    return "yay!"
 
 
 
