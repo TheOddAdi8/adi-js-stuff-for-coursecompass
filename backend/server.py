@@ -37,7 +37,7 @@ def showName():
 
 @app.route('/search', methods=['POST'])
 def search():
-    data = request.form['data']
+    data = request.form['data'].split(",")
     # Process the received data
     print(data)
     return "Data Received"
