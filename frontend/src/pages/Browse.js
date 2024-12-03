@@ -14,6 +14,22 @@ function Browse() {
   const dropdownOptions3 = ['Course1', 'Coure2', 'Course3'];
   const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
 
+  //Search functionality
+  fetch('/search', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'data=' + encodeURIComponent(JSON.stringify("sup dude")) 
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
   return (
     <div className='Browse' style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
      <h1>Please Select School/Department/Course/Unit</h1>
