@@ -39,8 +39,28 @@ def showName():
 def search():
     data = request.form['data'].replace("\"", "").split(",")
     # Process the received data
-    print(data)
-    return "Data Received"
+    # School, Department, Course, teacher
+    school = data[0]
+    department = data[1]
+    course = data[2]
+    teacher = data[3]
+    dataBase = mysql.connector.connect(
+        host="sql5.freemysqlhosting.net",
+        user="sql5744928",
+        passwd="wCBdQqsKCG",
+        database="sql5744928"
+    )
+    # preparing a cursor object
+    cursor = dataBase.cursor()
+    # Use dataBase.commit() when creating tables or inserting into tables
+    cursor.execute("""SELECT * FROM teacherName WHERE teacherName=%s""", teacher)
+    result = cursor.fetchall()
+
+    for i in result:
+        print(i)
+    # Disconnecting from the server
+    dataBase.close()
+
 
 
 if __name__ == '__main__':
