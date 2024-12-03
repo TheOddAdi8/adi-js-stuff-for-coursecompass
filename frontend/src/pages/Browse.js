@@ -15,20 +15,23 @@ function Browse() {
   const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
 
   //Search functionality
-  fetch('/search', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: 'data=' + encodeURIComponent(JSON.stringify("sup dude")) 
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+  function send() {
+    var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
+    fetch('/search', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
 
   return (
     <div className='Browse' style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
@@ -104,6 +107,7 @@ function Browse() {
         <p>Dropdown 3: {selectedOption3 || 'None'}</p>
         <p>Dropdown 4: {selectedOption4 || 'None'}</p>
       </div>
+      <button id="btn" className="sendBtn" onClick={send}>Search</button>
     </div>
   );
 }
