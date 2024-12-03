@@ -11,7 +11,7 @@ function Browse() {
   // Sample options for each dropdown
   const dropdownOptions1 = ['Elementary', 'Middle', 'Upper'];
   const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
-  const dropdownOptions3 = ['Course1', 'Coure2', 'Course3'];
+  const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
   const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
 
   //Search functionality
