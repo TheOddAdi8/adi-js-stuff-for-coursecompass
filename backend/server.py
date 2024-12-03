@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import mysql.connector
 
 
@@ -17,10 +17,8 @@ def showName():
         passwd="wCBdQqsKCG",
         database="sql5744928"
     )
-
     # preparing a cursor object
     cursor = dataBase.cursor()
-
     # Use dataBase.commit() when creating tables or inserting into tables
     cursor.execute("""SELECT * FROM CourseInfo""")
     result = cursor.fetchone()
@@ -36,6 +34,14 @@ def showName():
         'Name':name,
         'Phrase':teacher
     }
+
+@app.route('/search', methods=['POST'])
+def search():
+    data = request.form['data']
+    # Process the received data
+    print(data)
+    return "Data Received"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
