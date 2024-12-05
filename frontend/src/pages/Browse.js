@@ -1,7 +1,28 @@
 import '../styling/Browse.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+
+var something = "";
 
 function Browse() {
+  //BEGIN FETCHING DATA
+  // const [search, setsearch] = useState({
+  //   result: ""
+  // });
+  // useEffect(() => {
+  // // Using fetch to fetch the api from
+  // // flask server it will be redirected to proxy
+  //   fetch("/search")
+  //     .then((res) => res.json()
+  //     .then((search) => {
+  //       // Setting a data from api
+  //       setsearch({
+  //         result: search,
+  //       });
+  //     })
+  //   );
+  // }, []);
+  //END FETCHING DATA
+  
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
   const [selectedOption2, setSelectedOption2] = useState('');
@@ -26,11 +47,18 @@ function Browse() {
     })
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      console.log("Data" + data);
+      //console.log(response);
     })
     .catch(error => {
       console.error('Error:', error);
     });
+    
+    // fetch('/search')
+    // .then(response => response.json())
+    // .then(data => {
+    //   something = data;
+    // })
   }
 
   return (
@@ -108,6 +136,9 @@ function Browse() {
         <p>Dropdown 4: {selectedOption4 || 'None'}</p>
       </div>
       <button id="btn" className="sendBtn" onClick={send}>Search</button>
+      <div className="results">
+        <h3>sup {something}</h3>
+      </div>
     </div>
   );
 }
