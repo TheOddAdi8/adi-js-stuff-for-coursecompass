@@ -12,7 +12,7 @@ function Browse() {
   const dropdownOptions1 = ['Elementary', 'Middle', 'Upper'];
   const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
   const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
-  const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
+  const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
 
   //Search functionality
   function send() {
@@ -35,7 +35,7 @@ function Browse() {
 
   return (
     <div className='Browse' style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-     <h1>Please Select School/Department/Course/Unit</h1>
+     <h1>Please Select School/Department/Course/Teacher</h1>
       <div className='dd-content'>
 
 
