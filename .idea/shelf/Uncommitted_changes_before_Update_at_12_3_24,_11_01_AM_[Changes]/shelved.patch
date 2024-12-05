@@ -1,0 +1,19 @@
+Index: backend/server.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, request, jsonify\nimport mysql.connector\n\n\napp = Flask(__name__)\n\n@app.route('/')\ndef pythonHome():\n    return \"This is the python server\"\n\n@app.route('/data')\ndef showName():\n    # Connecting to the server\n    dataBase = mysql.connector.connect(\n        host=\"sql5.freemysqlhosting.net\",\n        user=\"sql5744928\",\n        passwd=\"wCBdQqsKCG\",\n        database=\"sql5744928\"\n    )\n    # preparing a cursor object\n    cursor = dataBase.cursor()\n    # Use dataBase.commit() when creating tables or inserting into tables\n    cursor.execute(\"\"\"SELECT * FROM CourseInfo\"\"\")\n    result = cursor.fetchone()\n    name = result[1]\n    cursor.execute(\"\"\"SELECT * FROM teacherName\"\"\")\n    result = cursor.fetchone()\n    teacher = result[1]\n\n    # Disconnecting from the server\n    dataBase.close()\n\n    return {\n        'Name':name,\n        'Phrase':teacher\n    }\n\n@app.route('/search', methods=['POST'])\ndef search():\n    data = request.form['data'].split(\",\")\n    # Process the received data\n    print(data)\n    return \"Data Received\"\n\n\nif __name__ == '__main__':\n    app.run(debug=True)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/server.py b/backend/server.py
+--- a/backend/server.py	(revision 5894a9d6485b58fe5e287de3ee1733c922d14ad8)
++++ b/backend/server.py	(date 1733241710811)
+@@ -37,7 +37,7 @@
+ 
+ @app.route('/search', methods=['POST'])
+ def search():
+-    data = request.form['data'].split(",")
++    data = request.form['data']
+     # Process the received data
+     print(data)
+     return "Data Received"

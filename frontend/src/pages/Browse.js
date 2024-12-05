@@ -11,13 +11,34 @@ function Browse() {
   // Sample options for each dropdown
   const dropdownOptions1 = ['Elementary', 'Middle', 'Upper'];
   const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
-  const dropdownOptions3 = ['Course1', 'Coure2', 'Course3'];
-  const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
+  const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
+  const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
+
+  //Search functionality
+  function send() {
+    var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
+    fetch('/search', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
 
   return (
     <div className='Browse' style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-     <h1>Please Select School/Department/Course/Unit</h1>
+     <h1>Please Select School/Department/Course/Teacher</h1>
       <div className='dd-content'>
+
+
         {/* Dropdown 1 */}
         <div className='dd1'>
             <select
@@ -86,6 +107,7 @@ function Browse() {
         <p>Dropdown 3: {selectedOption3 || 'None'}</p>
         <p>Dropdown 4: {selectedOption4 || 'None'}</p>
       </div>
+      <button id="btn" className="sendBtn" onClick={send}>Search</button>
     </div>
   );
 }
