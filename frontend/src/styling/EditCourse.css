@@ -1,0 +1,21 @@
+.EditCourse {
+    text-align: left;
+    background-color: #282c34;
+  }
+  
+  .EditCourse-header {
+    position: relative;
+    top: 120px;
+    left: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+
+  .course-title {
+    position: relative;
+    top: 300px;
+  }
