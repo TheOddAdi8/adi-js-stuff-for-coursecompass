@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 import mysql.connector
 
 
@@ -22,12 +22,13 @@ def showName():
     cursor = dataBase.cursor()
 
     # Use dataBase.commit() when creating tables or inserting into tables
-    cursor.execute("""SELECT * FROM CourseInfo""")
+    cursor.execute("""SELECT courseName FROM CourseInfo""")
     result = cursor.fetchone()
-    name = result[1]
-    cursor.execute("""SELECT * FROM teacherName""")
+    name = result
+    cursor.reset()
+    cursor.execute("""SELECT teacherName FROM teacherName""")
     result = cursor.fetchone()
-    teacher = result[1]
+    teacher = result
 
     # Disconnecting from the server
     dataBase.close()
