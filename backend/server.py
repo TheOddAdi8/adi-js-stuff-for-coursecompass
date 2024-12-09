@@ -4,6 +4,15 @@ import mysql.connector
 
 app = Flask(__name__)
 
+def connectToData():
+    dataBase = mysql.connector.connect(
+        host="sql5.freemysqlhosting.net",
+        user="sql5744928",
+        passwd="wCBdQqsKCG",
+        database="sql5744928"
+    )
+    return dataBase
+
 @app.route('/')
 def pythonHome():
     return "This is the python server"
@@ -11,23 +20,19 @@ def pythonHome():
 @app.route('/data')
 def showName():
     # Connecting to the server
-    dataBase = mysql.connector.connect(
-        host="sql5.freemysqlhosting.net",
-        user="sql5744928",
-        passwd="wCBdQqsKCG",
-        database="sql5744928"
-    )
+    dataBase = connectToData()
 
     # preparing a cursor object
     cursor = dataBase.cursor()
 
     # Use dataBase.commit() when creating tables or inserting into tables
-    cursor.execute("""SELECT * FROM CourseInfo""")
+    cursor.execute("""SELECT courseName FROM CourseInfo""")
     result = cursor.fetchone()
-    name = result[1]
-    cursor.execute("""SELECT * FROM teacherName""")
+    name = result
+    cursor.fetchall()
+    cursor.execute("""SELECT teacherName FROM teacherName""")
     result = cursor.fetchone()
-    teacher = result[1]
+    teacher = result
 
     # Disconnecting from the server
     dataBase.close()
@@ -47,31 +52,46 @@ def search():
     department = data[1]
     course = data[2]
     teacher = data[3]
-    dataBase = mysql.connector.connect(
-        host="sql5.freemysqlhosting.net",
-        user="sql5744928",
-        passwd="wCBdQqsKCG",
-        database="sql5744928"
-    )
-    # preparing a cursor object
-    cursor = dataBase.cursor()
-    # Getting the teacher id from the teacherName table based on the teacher name
-    statement = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
-    cursor.execute(statement)
-    teacherId = cursor.fetchone()[0]
-    # Getting all the course ids from the courseTeacher table based on the teacher id
-    statement = "SELECT courseId FROM courseTeacher WHERE userID='" + str(teacherId) + "'"
-    cursor.execute(statement)
-    courseIds = cursor.fetchall()
+    dataBase = connectToData()
     results = []
-    # Iterating through all the courses taught by the teacher and getting all of the data about each course from the courseInfo table
-    for id in courseIds:
-        id = id[0]
-        statement = "SELECT * FROM CourseInfo WHERE courseId='" + str(id) + "'"
+    try:
+        # preparing a cursor object
+        cursor = dataBase.cursor()
+        # Prepares the initial sql query
+        statement = "SELECT courseId FROM courseTeacher"
+        # Getting the teacher id from the teacherName table based on the teacher name
+        if teacher != "":
+            statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
+            cursor.execute(statementTeacher)
+            teacherId = cursor.fetchall()[0][0]
+            if statement == "SELECT courseId FROM courseTeacher":
+                statement+=" WHERE "
+            if "=" in statement:
+                statement += " AND "
+            statement+="userID='" + str(teacherId) + "'"
+        # Getting the subject id from the Subjects table
+        if department != "":
+            statementDepartment = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
+            cursor.execute(statementDepartment)
+            subjectId = cursor.fetchall()[0][0]
+            if statement == "SELECT courseId FROM courseTeacher":
+                statement+=" WHERE "
+            if "WHERE" in statement:
+                statement += " AND "
+            statement+= "subjectID='" + str(subjectId) + "'"
         cursor.execute(statement)
-        results.append(cursor.fetchone())
+        courseIds = cursor.fetchall()
+        # Iterating through all the courses taught by the teacher and getting all of the data about each course from the courseInfo table
+        for id in courseIds:
+            id = id[0]
+            statement = "SELECT * FROM CourseInfo WHERE courseId='" + str(id) + "'"
+            cursor.execute(statement)
+            results.append(cursor.fetchall()[0])
+        
+        dataBase.close()
+    except:
+        print("Error Getting Results")
     
-    dataBase.close()
 
     # Formatting the course name and course ids into a string
     strResults = ""
@@ -80,7 +100,9 @@ def search():
     strResults = strResults[0:len(strResults)-1]
     
     print(strResults)
-    return strResults
+    return {
+        'Result':strResults
+    }
 
 
 
