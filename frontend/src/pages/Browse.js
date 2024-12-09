@@ -21,14 +21,16 @@ function Browse() {
   //Search functionality
   function Send() {
     var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
+    
+    fetch('/search', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+    })
     useEffect(() => {
-      fetch('/search', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
-      })
+      fetch('/search')
       .then((res) => res.json())
       .then(data => {
         console.log(data);
