@@ -5,3 +5,9 @@
     left: 0px;
     z-index: 2;
 }
+
+.results {
+    position: relative;
+    top: 50px;
+    color: #6d4dff;
+}
