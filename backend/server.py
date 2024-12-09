@@ -58,30 +58,29 @@ def search():
     try:
         # preparing a cursor object
         cursor = dataBase.cursor()
+        # Prepares the initial sql query
+        statement = "SELECT courseId FROM courseTeacher"
         # Getting the teacher id from the teacherName table based on the teacher name
         if teacher != "":
             statement = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
             cursor.execute(statement)
             teacherId = cursor.fetchone()[0]
-        # Getting the subject id from the Subjects table
-        if department != "":
-            statement = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
-            cursor.execute(statement)
-            subjectId = cursor.fetchone()[0]
-        # Getting all the course ids from the courseTeacher table based on the teacher id
-        statement = "SELECT courseId FROM courseTeacher"
-        if teacher != "":
             if statement == "SELECT courseId FROM courseTeacher":
                 statement+=" WHERE "
             if "=" in statement:
                 statement += " AND "
             statement+="userID='" + str(teacherId) + "'"
+        # Getting the subject id from the Subjects table
         if department != "":
+            statement = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
+            cursor.execute(statement)
+            subjectId = cursor.fetchone()[0]
             if statement == "SELECT courseId FROM courseTeacher":
                 statement+=" WHERE "
             if "WHERE" in statement:
                 statement += " AND "
             statement+= "subjectID='" + str(subjectId) + "'"
+            
         cursor.execute(statement)
         courseIds = cursor.fetchall()
         # Iterating through all the courses taught by the teacher and getting all of the data about each course from the courseInfo table
