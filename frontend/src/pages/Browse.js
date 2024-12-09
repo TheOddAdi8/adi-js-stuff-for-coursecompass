@@ -1,28 +1,11 @@
 import '../styling/Browse.css';
-import React, { useState, useEffect } from "react";
-
-var something = "";
+import React, { useState, useEffect } from 'react';
 
 function Browse() {
-  //BEGIN FETCHING DATA
-  // const [search, setsearch] = useState({
-  //   result: ""
-  // });
-  // useEffect(() => {
-  // // Using fetch to fetch the api from
-  // // flask server it will be redirected to proxy
-  //   fetch("/search")
-  //     .then((res) => res.json()
-  //     .then((search) => {
-  //       // Setting a data from api
-  //       setsearch({
-  //         result: search,
-  //       });
-  //     })
-  //   );
-  // }, []);
-  //END FETCHING DATA
-  
+  const [data, setdata] = useState({
+    result: ""
+  });
+
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
   const [selectedOption2, setSelectedOption2] = useState('');
@@ -36,29 +19,27 @@ function Browse() {
   const dropdownOptions4 = ['Teacher1', 'Teacher2', 'Teacher3'];
 
   //Search functionality
-  function send() {
+  function Send() {
     var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
-    fetch('/search', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Data" + data);
-      //console.log(response);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-    
-    // fetch('/search')
-    // .then(response => response.json())
-    // .then(data => {
-    //   something = data;
-    // })
+    useEffect(() => {
+      fetch('/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+      })
+      .then((res) => res.json())
+      .then(data => {
+        console.log(data);
+        setdata({
+          result: data.Result
+        })
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }, []);
   }
 
   return (
@@ -135,10 +116,8 @@ function Browse() {
         <p>Dropdown 3: {selectedOption3 || 'None'}</p>
         <p>Dropdown 4: {selectedOption4 || 'None'}</p>
       </div>
-      <button id="btn" className="sendBtn" onClick={send}>Search</button>
-      <div className="results">
-        <h3>sup {something}</h3>
-      </div>
+      <button id="btn" className="sendBtn" onClick={Send}>Search</button>
+      <h1>{data.result}</h1>
     </div>
   );
 }
