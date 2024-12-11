@@ -104,6 +104,32 @@ def search():
         'Result':strResults
     }
 
+@app.route('/populate')
+def populate():
+    # Connecting to the server
+    dataBase = connectToData()
+
+    # preparing a cursor object
+    cursor = dataBase.cursor()
+    statement = "SELECT divisionName FROM division"
+    cursor.execute(statement)
+    divisions = cursor.fetchall()
+    statement = "SELECT subjectName FROM subjects"
+    cursor.execute(statement)
+    subjects = cursor.fetchall()
+    statement = "SELECT courseName FROM CourseInfo"
+    cursor.execute(statement)
+    courses = cursor.fetchall()
+    statement = "SELECT teacherName FROM teacherName"
+    cursor.execute(statement)
+    teachers = cursor.fetchall()
+
+    return {
+        'Divisions':str(divisions), 
+        'Subjects': str(subjects),
+        'Courses': str(courses),
+        'Teachers':str(teachers)
+    }
 
 
 
