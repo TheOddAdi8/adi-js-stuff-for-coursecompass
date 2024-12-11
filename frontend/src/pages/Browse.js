@@ -5,6 +5,9 @@ function Browse() {
   const [data, setdata] = useState({
     result: ""
   });
+  const [searchParameters, setSearchParameters] = useState({
+    input: ""
+  });
 
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
@@ -18,31 +21,76 @@ function Browse() {
   const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
   const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
 
+  // var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
+
+  // useEffect(() => {
+  //   fetch('/search', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded'
+  //     },
+  //     body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters))
+  //   })
+  //   .then((res) => res.json())
+  //   .then(data => {
+  //     console.log(data);
+  //     setdata({
+  //       result: data.Result
+  //     })
+  //   })
+  //   .catch((error) => {
+  //     console.error('Error:', error);
+  //   });
+  // }, []);
+
   //Search functionality
-  function Send() {
-    var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
-    
+  const Send = () => {
+    if (!(selectedOption1 === '' && selectedOption2 === '' && selectedOption3 === '' && selectedOption4 === '')) {
+      setSearchParameters({
+        input: (selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4)
+      });
+    }
+    else {
+      setSearchParameters({
+        input: ''
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!searchParameters.input) {
+      setdata({
+        result: ''
+      })
+      return;
+    }  // Don't fetch if input is empty
+
+    else if (!data.result) {
+      setdata({
+        result: 'No results.'
+      })
+      return;
+    }
+
     fetch('/search', {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters.input))
     })
-    useEffect(() => {
-      fetch('/search')
-      .then((res) => res.json())
-      .then(data => {
-        console.log(data);
-        setdata({
-          result: data.Result
-        })
+    .then((res) => res.json())
+    .then(data => {
+      console.log(searchParameters.input)
+      console.log(data);
+      setdata({
+        result: data.Result
       })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }, []);
-  }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  }, [searchParameters.input, data.result]);
 
   return (
     <div className='Browse' style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
