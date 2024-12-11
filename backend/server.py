@@ -13,9 +13,15 @@ def connectToData():
     )
     return dataBase
 
-# @app.route('/')
-# def pythonHome():
-#     return "This is the python server"
+@app.route('/')
+def pythonHome():
+    # Connecting to the server
+    dataBase = connectToData()
+
+    # preparing a cursor object
+    cursor = dataBase.cursor()
+    cursor.execute("SELECT * FROM subject")
+    return cursor.fetchall()
 
 @app.route('/data')
 def showName():
@@ -58,42 +64,76 @@ def search():
         # preparing a cursor object
         cursor = dataBase.cursor()
         # Prepares the initial sql query
-        statement = "SELECT courseId FROM courseTeacher"
-        # Getting the teacher id from the teacherName table based on the teacher name
-        if teacher != "":
-            statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
+        statement = "SELECT * FROM CourseInfo"
+        original = statement
+
+        # Getting the school id from the division table based on the division name
+        if school != "":
+            print(school)
+            statementTeacher = "SELECT divisionID FROM division WHERE divisionName='" + school + "'"
             cursor.execute(statementTeacher)
-            teacherId = cursor.fetchall()[0][0]
-            if statement == "SELECT courseId FROM courseTeacher":
+            schoolId = cursor.fetchall()[0][0]
+            print(schoolId)
+            if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
                 statement += " AND "
-            statement+="userID='" + str(teacherId) + "'"
+            statement+="divisionID='" + str(schoolId) + "'"
+
         # Getting the subject id from the Subjects table
         if department != "":
-            statementDepartment = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
+            print(department)
+            statementDepartment = "SELECT subjectId FROM subject WHERE subjectName='" + department + "'"
             cursor.execute(statementDepartment)
             subjectId = cursor.fetchall()[0][0]
-            if statement == "SELECT courseId FROM courseTeacher":
+            print(subjectId)
+            if statement == original:
                 statement+=" WHERE "
-            if "WHERE" in statement:
+            if "=" in statement:
                 statement += " AND "
             statement+= "subjectID='" + str(subjectId) + "'"
+
+        # Getting the courses from the course info table based on the course name
+        if course != "":
+            print(course)
+            if statement == original:
+                statement+=" WHERE "
+            if "=" in statement:
+                statement += " AND "
+            statement+="courseName='" + str(course) + "'"
+
+        # Getting the teacher id from the teacherName table based on the teacher name
+        teacherCourses = []
+        if teacher != "":
+            print(teacher)
+            statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
+            cursor.execute(statementTeacher)
+            teacherId = cursor.fetchall()[0][0]
+            statementTeacher = "SELECT courseID FROM courseTeacher WHERE userID='" + str(teacherId) + "'"
+            cursor.execute(statementTeacher)
+            for i in cursor.fetchall():
+                teacherCourses.append(str(i[0]))
+
+            if statement == original:
+                statement+=" WHERE "
+            if "=" in statement:
+                statement += " AND "
+            statement+="courseID IN ("
+            for i in teacherCourses:
+                statement+= i+", "
+            print(statement)
+            statement = statement[:-2]
+            statement+=")"
+            
+        print(statement)
         cursor.execute(statement)
-        courseIds = cursor.fetchall()
-        # Iterating through all the courses taught by the teacher and getting all of the data about each course from the courseInfo table
-        for id in courseIds:
-            id = id[0]
-            statement = "SELECT * FROM CourseInfo WHERE courseId='" + str(id) + "'"
-            cursor.execute(statement)
-            results.append(cursor.fetchall()[0])
-        
-        dataBase.close()
+        results = cursor.fetchall()
+
     except:
         print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = ""
+    strResults = "No Results "
     for i in results:
         strResults += i[1] + ":" + str(i[0]) + ","
     strResults = strResults[0:len(strResults)-1]
@@ -104,7 +144,7 @@ def search():
         'Result':strResults
     }
 
-@app.route('/')
+@app.route('/populate')
 def populate():
     # Connecting to the server
     dataBase = connectToData()
