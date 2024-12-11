@@ -13,9 +13,9 @@ def connectToData():
     )
     return dataBase
 
-@app.route('/')
-def pythonHome():
-    return "This is the python server"
+# @app.route('/')
+# def pythonHome():
+#     return "This is the python server"
 
 @app.route('/data')
 def showName():
@@ -104,7 +104,7 @@ def search():
         'Result':strResults
     }
 
-@app.route('/populate')
+@app.route('/')
 def populate():
     # Connecting to the server
     dataBase = connectToData()
@@ -113,22 +113,30 @@ def populate():
     cursor = dataBase.cursor()
     statement = "SELECT divisionName FROM division"
     cursor.execute(statement)
-    divisions = cursor.fetchall()
-    statement = "SELECT subjectName FROM subjects"
+    divisions = []
+    for x in cursor.fetchall():
+        divisions.append(x[0].replace("'", ""))
+    statement = "SELECT subjectName FROM subject"
     cursor.execute(statement)
-    subjects = cursor.fetchall()
+    subjects = []
+    for x in cursor.fetchall():
+        subjects.append(x[0].replace("'", ""))
     statement = "SELECT courseName FROM CourseInfo"
     cursor.execute(statement)
-    courses = cursor.fetchall()
+    courses = []
+    for x in cursor.fetchall():
+        courses.append(x[0].replace("'", ""))
     statement = "SELECT teacherName FROM teacherName"
     cursor.execute(statement)
-    teachers = cursor.fetchall()
-
+    teachers = []
+    for x in cursor.fetchall():
+        teachers.append(x[0].replace("'", ""))
+    print(teachers)
     return {
-        'Divisions':str(divisions), 
-        'Subjects': str(subjects),
-        'Courses': str(courses),
-        'Teachers':str(teachers)
+        'Divisions':divisions, 
+        'Subjects':subjects,
+        'Courses':courses,
+        'Teachers':teachers
     }
 
 
