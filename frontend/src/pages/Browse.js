@@ -18,12 +18,14 @@ function Browse() {
   useEffect(() => {
     fetch("/populate").then((res) =>
       res.json().then((data) => {
+        console.log(data)
         setDropdowns({
           divisions: data.Divisions,
           subjects: data.Subjects,
           courses: data.Courses,
           teachers: data.Teachers
         })
+        console.log(dropdowns)
       })
     )
   }, [])
@@ -39,6 +41,8 @@ function Browse() {
   // const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
   // const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
   // const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
+
+  console.log(dropdowns)
 
   const dropdownOptions1 = dropdowns.divisions;
   const dropdownOptions2 = dropdowns.subjects;
