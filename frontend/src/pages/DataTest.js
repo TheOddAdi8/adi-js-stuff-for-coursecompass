@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import '../styling/DataTest.css';
+
 function DataTest() {
   const [data, setdata] = useState({
     name: "",

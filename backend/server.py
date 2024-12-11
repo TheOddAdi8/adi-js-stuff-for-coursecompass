@@ -91,7 +91,6 @@ def search():
         dataBase.close()
     except:
         print("Error Getting Results")
-    
 
     # Formatting the course name and course ids into a string
     strResults = ""
@@ -100,9 +99,11 @@ def search():
     strResults = strResults[0:len(strResults)-1]
     
     print(strResults)
+
     return {
         'Result':strResults
     }
+
 
 
 
