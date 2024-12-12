@@ -28,7 +28,7 @@ function Browse() {
         console.log(dropdowns)
       })
     )
-  }, [])
+  }, [dropdowns])
 
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
@@ -44,6 +44,7 @@ function Browse() {
 
   console.log(dropdowns)
 
+  /* FIX THESE SOMEHOW THERE IS SOMETHING TERRIBLY WRONG WITH DROPDOWNS */
   const dropdownOptions1 = dropdowns.divisions;
   const dropdownOptions2 = dropdowns.subjects;
   const dropdownOptions3 = dropdowns.courses;
