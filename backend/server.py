@@ -202,7 +202,7 @@ def addCourse():
     subject = "English"
     division = "Upper"
     teacher = "Marcus Twyford"
-    units = ["1", "2", "3"]
+    units = ["1:Text", "2:Text", "3:Text"]
 
     # Connecting to the server
     dataBase = connectToData()
@@ -246,9 +246,15 @@ def addCourse():
     # Add to the courseTeacher table
     statement = "INSERT INTO courseTeacher VALUES (%i, %i)" % (courseId, teacherId)
     cursor.execute(statement)
-    '''
-    INSERT INTO unitText VALUES (1, 1, 'We want to promote diversity and inclusion in CS.');
-    '''
+
+    # Adding the units to the unit table
+    for unit in units:
+        unitName = unit.split(":")[0]
+        unitText = unit.split(":")[1]
+        cursor.execute("INSERT INTO Unit (unitName, courseID) VALUES (%s, %i)" % (unitName, courseId))
+        cursor.execute("")
+
+    #dataBase.commit()
 
 if __name__ == '__main__':
     app.run(debug=True)
