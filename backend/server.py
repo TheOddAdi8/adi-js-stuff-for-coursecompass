@@ -4,6 +4,23 @@ import mysql.connector
 
 app = Flask(__name__)
 
+def connectToData():
+    dataBase = mysql.connector.connect(
+        host="sql5.freemysqlhosting.net",
+        user="sql5744928",
+        passwd="wCBdQqsKCG",
+        database="sql5744928"
+    )
+    return dataBase
+
+@app.route('/')
+def pythonHome():
+    return "This is the python server"
+
+@app.route('/data')
+def showName():
+    # Connecting to the server
+    dataBase = connectToData()
 # Creates a connection to the database
 def connectToData():
     dataBase = mysql.connector.connect(
@@ -32,7 +49,7 @@ def showName():
     cursor.execute("""SELECT courseName FROM CourseInfo""")
     result = cursor.fetchone()
     name = result
-    cursor.reset()
+    cursor.fetchall()
     cursor.execute("""SELECT teacherName FROM teacherName""")
     result = cursor.fetchone()
     teacher = result
@@ -55,12 +72,7 @@ def search():
     department = data[1]
     course = data[2]
     teacher = data[3]
-    dataBase = mysql.connector.connect(
-        host="sql5.freemysqlhosting.net",
-        user="sql5744928",
-        passwd="wCBdQqsKCG",
-        database="sql5744928"
-    )
+    dataBase = connectToData()
     results = []
     try:
         # preparing a cursor object
@@ -69,9 +81,9 @@ def search():
         statement = "SELECT courseId FROM courseTeacher"
         # Getting the teacher id from the teacherName table based on the teacher name
         if teacher != "":
-            statement = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
-            cursor.execute(statement)
-            teacherId = cursor.fetchone()[0]
+            statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
+            cursor.execute(statementTeacher)
+            teacherId = cursor.fetchall()[0][0]
             if statement == "SELECT courseId FROM courseTeacher":
                 statement+=" WHERE "
             if "=" in statement:
@@ -79,15 +91,14 @@ def search():
             statement+="userID='" + str(teacherId) + "'"
         # Getting the subject id from the Subjects table
         if department != "":
-            statement = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
-            cursor.execute(statement)
-            subjectId = cursor.fetchone()[0]
+            statementDepartment = "SELECT subjectId FROM subjects WHERE subjectName='" + department + "'"
+            cursor.execute(statementDepartment)
+            subjectId = cursor.fetchall()[0][0]
             if statement == "SELECT courseId FROM courseTeacher":
                 statement+=" WHERE "
             if "WHERE" in statement:
                 statement += " AND "
             statement+= "subjectID='" + str(subjectId) + "'"
-            
         cursor.execute(statement)
         courseIds = cursor.fetchall()
         # Iterating through all the courses taught by the teacher and getting all of the data about each course from the courseInfo table
@@ -95,12 +106,11 @@ def search():
             id = id[0]
             statement = "SELECT * FROM CourseInfo WHERE courseId='" + str(id) + "'"
             cursor.execute(statement)
-            results.append(cursor.fetchone())
+            results.append(cursor.fetchall()[0])
         
         dataBase.close()
     except:
         print("Error Getting Results")
-    
 
     # Formatting the course name and course ids into a string
     strResults = ""
@@ -109,6 +119,7 @@ def search():
     strResults = strResults[0:len(strResults)-1]
     
     print(strResults)
+
     return {
         'Result':strResults
     }

@@ -1,7 +1,11 @@
 import '../styling/Browse.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Browse() {
+  const [data, setdata] = useState({
+    result: ""
+  });
+
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
   const [selectedOption2, setSelectedOption2] = useState('');
@@ -15,22 +19,27 @@ function Browse() {
   const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
 
   //Search functionality
-  function send() {
+  function Send() {
     var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
-    fetch('/search', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+    useEffect(() => {
+      fetch('/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'data=' + encodeURIComponent(JSON.stringify(searchParameters)) 
+      })
+      .then((res) => res.json())
+      .then(data => {
+        console.log(data);
+        setdata({
+          result: data.Result
+        })
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }, []);
   }
 
   return (
@@ -107,7 +116,8 @@ function Browse() {
         <p>Dropdown 3: {selectedOption3 || 'None'}</p>
         <p>Dropdown 4: {selectedOption4 || 'None'}</p>
       </div>
-      <button id="btn" className="sendBtn" onClick={send}>Search</button>
+      <button id="btn" className="sendBtn" onClick={Send}>Search</button>
+      <h1>{data.result}</h1>
     </div>
   );
 }
