@@ -9,23 +9,22 @@ function Browse() {
     input: ""
   });
   const [dropdowns, setDropdowns] = useState({
-    divisions: "",
-    subjects: "",
-    courses: "",
-    teachers: ""
+    divisions: [],
+    subjects: [],
+    courses: [],
+    teachers: []
   });
 
   useEffect(() => {
     fetch("/populate").then((res) =>
       res.json().then((data) => {
-        console.log(data)
+        console.log(data.Divisions)
         setDropdowns({
-          divisions: data.Divisions,
-          subjects: data.Subjects,
-          courses: data.Courses,
-          teachers: data.Teachers
+          divisions: data.Divisions.split("'").join("").split(", "),
+          subjects: data.Subjects.split("'").join("").split(", "),
+          courses: data.Courses.split("'").join("").split(", "),
+          teachers: data.Teachers.split("'").join("").split(", ")
         })
-        console.log(dropdowns)
       })
     )
   }, [dropdowns])
