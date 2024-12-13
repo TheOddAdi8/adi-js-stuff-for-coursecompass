@@ -181,7 +181,6 @@ def populate():
         else:
             currTeacher = currTeacherList[0]
         teachers.append(currTeacher)
-    print(teachers)
     return {
         'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
         'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
