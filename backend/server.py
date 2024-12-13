@@ -4,6 +4,7 @@ import mysql.connector
 
 app = Flask(__name__)
 
+# Creates a connection to the database
 def connectToData():
     dataBase = mysql.connector.connect(
         host="sql5.freemysqlhosting.net",
@@ -13,16 +14,12 @@ def connectToData():
     )
     return dataBase
 
+# Homepage for the python server
 @app.route('/')
 def pythonHome():
-    # Connecting to the server
-    dataBase = connectToData()
+    return "Python Server"
 
-    # preparing a cursor object
-    cursor = dataBase.cursor()
-    cursor.execute("SELECT * FROM subject")
-    return cursor.fetchall()
-
+# Used for the Data Testing page to display the first teacher and course in the database
 @app.route('/data')
 def showName():
     # Connecting to the server
@@ -69,11 +66,9 @@ def search():
 
         # Getting the school id from the division table based on the division name
         if school != "":
-            print(school)
             statementTeacher = "SELECT divisionID FROM division WHERE divisionName='" + school + "'"
             cursor.execute(statementTeacher)
             schoolId = cursor.fetchall()[0][0]
-            print(schoolId)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -82,11 +77,9 @@ def search():
 
         # Getting the subject id from the Subjects table
         if department != "":
-            print(department)
             statementDepartment = "SELECT subjectId FROM subject WHERE subjectName='" + department + "'"
             cursor.execute(statementDepartment)
             subjectId = cursor.fetchall()[0][0]
-            print(subjectId)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -95,7 +88,6 @@ def search():
 
         # Getting the courses from the course info table based on the course name
         if course != "":
-            print(course)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -105,7 +97,6 @@ def search():
         # Getting the teacher id from the teacherName table based on the teacher name
         teacherCourses = []
         if teacher != "":
-            print(teacher)
             statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
             cursor.execute(statementTeacher)
             teacherId = cursor.fetchall()[0][0]
@@ -121,11 +112,8 @@ def search():
             statement+="courseID IN ("
             for i in teacherCourses:
                 statement+= i+", "
-            print(statement)
             statement = statement[:-2]
             statement+=")"
-            
-        print(statement)
         cursor.execute(statement)
         results = cursor.fetchall()
 
@@ -133,7 +121,7 @@ def search():
         print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = "No Results "
+    strResults = " "
     for i in results:
         strResults += i[1] + ":" + str(i[0]) + ","
     strResults = strResults[0:len(strResults)-1]
@@ -144,7 +132,8 @@ def search():
         'Result':strResults
     }
 
-@app.route('/populate')
+# Used to populate the dropdown menus on the browse page
+@app.route('/populate', methods={'POST'})
 def populate():
     # Connecting to the server
     dataBase = connectToData()
@@ -174,15 +163,88 @@ def populate():
     teachers = []
     for x in cursor.fetchall():
         teachers.append(x[0].replace("'", ""))
-        
     return {
-        'Divisions':divisions, 
-        'Subjects':subjects,
-        'Courses':courses,
-        'Teachers':teachers
+        'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
+        'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
+        'Courses':str(courses).removeprefix("[").removesuffix("]"),
+        'Teachers':str(teachers).removeprefix("[").removesuffix("]")
     }
 
+# Used for the edit course page to edit the courses
+@app.route("/editCourse", methods=['POST'])
+def editCourse():
+    return "Nothing here yet"
 
+# Used for adding a course
+@app.route("/addCourse")
+def addCourse():
+    # textFields = request.form['data'].split(",")
+    # name = textFields[0]
+    # year = textFields[1]
+    # grades = textFields[2]
+    # subject = textFields[3]
+    # division = textFields[4]
+    # teacher = textFields[5]
+    # units = textFields[6].split(",")
+    name = "Computer Science 3"
+    year = "2024"
+    grades = "grades 10-12"
+    subject = "English"
+    division = "Upper"
+    teacher = "Marcus Twyford"
+    units = ["1:Text", "2:Text", "3:Text"]
+
+    # Connecting to the server
+    dataBase = connectToData()
+
+    # preparing a cursor object
+    cursor = dataBase.cursor()
+    # Add a new subject if the subject does not exist
+    cursor.execute("SELECT subjectID FROM subject WHERE subjectName='%s'" % subject)
+    if len(cursor.fetchall()) == 0:
+        cursor.execute("INSERT INTO subject (subjectName) VALUES ('%s')" % subject)
+    
+    # Add a new division if that division does not exist
+    cursor.execute("SELECT divisionID FROM division WHERE divisionName='%s'" % division)
+    if len(cursor.fetchall()) == 0:
+        cursor.execute("INSERT INTO subject VALUES ('%s')" % division)
+
+    cursor.execute("SELECT subjectID FROM subject WHERE subjectName='%s'" % subject)
+    subId = int(cursor.fetchone()[0])
+    cursor.fetchall()
+    cursor.execute("SELECT divisionID FROM division WHERE divisionName='%s'" % division)
+    divId = int(cursor.fetchone()[0])
+    cursor.fetchall()
+
+    # Add to the courseInfo table
+    statement = "INSERT INTO CourseInfo (courseName, subjectID, year, grade, divisionID) VALUES ('%s', %i, %i, '%s', %i)" % (name, subId, int(year), grades, divId)
+    cursor.execute(statement)
+
+    cursor.execute("SELECT @@IDENTITY")
+    courseId = int(cursor.fetchall()[0][0])
+
+    # Add to the teacher table
+    cursor.execute("SELECT userID FROM teacherName WHERE teacherName='%s'" % teacher)
+    if len(cursor.fetchall()) == 0:
+        statement = "INSERT INTO teacherName VALUES ('%s')" % (teacher)
+        cursor.execute(statement)
+        cursor.execute("SELECT SCOPE_IDENTITY()")
+        teacherId = cursor.fetchall()[0]
+    else:
+        cursor.execute("SELECT userID FROM teacherName WHERE teacherName='%s'" % teacher)
+        teacherId = int(cursor.fetchall()[0][0])
+    # Add to the courseTeacher table
+    statement = "INSERT INTO courseTeacher VALUES (%i, %i)" % (courseId, teacherId)
+    cursor.execute(statement)
+
+    # Adding the units to the unit table
+    for unit in units:
+        unitName = unit.split(":")[0]
+        unitText = unit.split(":")[1]
+        cursor.execute("INSERT INTO Unit (unitName, courseID) VALUES (%s, %i)" % (unitName, courseId))
+        cursor.execute("")
+
+    #dataBase.commit()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

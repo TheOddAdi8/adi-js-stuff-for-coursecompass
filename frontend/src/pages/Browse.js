@@ -8,6 +8,30 @@ function Browse() {
   const [searchParameters, setSearchParameters] = useState({
     input: ""
   });
+  const [dropdowns, setDropdowns] = useState({
+    divisions: [],
+    subjects: [],
+    courses: [],
+    teachers: []
+  });
+
+  var potato = "";
+
+  useEffect(() => {
+    fetch("/populate", {method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }}).then((res) =>
+      res.json().then((data) => {
+        setDropdowns({
+          divisions: data.Divisions.split("'").join("").split(", "),
+          subjects: data.Subjects.split("'").join("").split(", "),
+          courses: data.Courses.split("'").join("").split(", "),
+          teachers: data.Teachers.split("'").join("").split(", ")
+        })
+      })
+    )
+  }, [potato])
 
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
@@ -16,10 +40,16 @@ function Browse() {
   const [selectedOption4, setSelectedOption4] = useState('');
 
   // Sample options for each dropdown
-  const dropdownOptions1 = ['Elementary', 'Middle', 'Upper'];
-  const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
-  const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
-  const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
+  // const dropdownOptions1 = ['Elementary', 'Middle', 'Upper'];
+  // const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
+  // const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
+  // const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
+
+  /* FIX THESE SOMEHOW THERE IS SOMETHING TERRIBLY WRONG WITH DROPDOWNS */
+  const dropdownOptions1 = dropdowns.divisions;
+  const dropdownOptions2 = dropdowns.subjects;
+  const dropdownOptions3 = dropdowns.courses;
+  const dropdownOptions4 = dropdowns.teachers;
 
   // var searchParameters = selectedOption1 + "," + selectedOption2 + "," + selectedOption3 + "," + selectedOption4;
 
@@ -81,8 +111,6 @@ function Browse() {
     })
     .then((res) => res.json())
     .then(data => {
-      console.log(searchParameters.input)
-      console.log(data);
       setdata({
         result: data.Result
       })
