@@ -5,6 +5,32 @@ function Browse() {
   const [data, setdata] = useState({
     result: ""
   });
+  const [searchParameters, setSearchParameters] = useState({
+    input: ""
+  });
+  const [dropdowns, setDropdowns] = useState({
+    divisions: [],
+    subjects: [],
+    courses: [],
+    teachers: []
+  });
+
+  useEffect(() => {
+    fetch("/populate", {method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }}).then((res) =>
+      res.json().then((data) => {
+        console.log(data.Divisions)
+        setDropdowns({
+          divisions: data.Divisions.split("'").join("").split(", "),
+          subjects: data.Subjects.split("'").join("").split(", "),
+          courses: data.Courses.split("'").join("").split(", "),
+          teachers: data.Teachers.split("'").join("").split(", ")
+        })
+      })
+    )
+  }, [dropdowns])
 
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');

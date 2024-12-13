@@ -142,7 +142,7 @@ def search():
     }
 
 # Used to populate the dropdown menus on the browse page
-@app.route('/populate')
+@app.route('/populate', methods={'POST'})
 def populate():
     # Connecting to the server
     dataBase = connectToData()
