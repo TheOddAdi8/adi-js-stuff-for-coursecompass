@@ -57,6 +57,7 @@ def search():
     teacher = data[3]
     dataBase = connectToData()
     results = []
+    noResults = False
     try:
         # preparing a cursor object
         cursor = dataBase.cursor()
@@ -100,37 +101,46 @@ def search():
             statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
             cursor.execute(statementTeacher)
             teacherId = cursor.fetchall()[0][0]
-            statementTeacher = "SELECT courseID FROM courseTeacher WHERE userID='" + str(teacherId) + "'"
-            cursor.execute(statementTeacher)
-            for i in cursor.fetchall():
-                teacherCourses.append(str(i[0]))
+            cursor.execute("SELECT courseID FROM courseTeacher WHERE userID='%i'" % teacherId)
+            if len(cursor.fetchall()) != 0:
+                statementTeacher = "SELECT courseID FROM courseTeacher WHERE userID='" + str(teacherId) + "'"
+                cursor.execute(statementTeacher)
+                for i in cursor.fetchall():
+                    teacherCourses.append(str(i[0]))
 
-            if statement == original:
-                statement+=" WHERE "
-            if "=" in statement:
-                statement += " AND "
-            statement+="courseID IN ("
-            for i in teacherCourses:
-                statement+= i+", "
-            statement = statement[:-2]
-            statement+=")"
+                if statement == original:
+                    statement+=" WHERE "
+                if "=" in statement:
+                    statement += " AND "
+                statement+="courseID IN ("
+                for i in teacherCourses:
+                    statement+= i+", "
+                statement = statement[:-2]
+                statement+=")"
+            else:
+                noResults = True
             
-        cursor.execute(statement)
-        results = cursor.fetchall()
+        if not noResults:
+            cursor.execute(statement)
+            results = cursor.fetchall()
 
     except:
         print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = " "
+    strNames = ""
+    strIds = ""
     for i in results:
-        strResults += i[1] + ":" + str(i[0]) + ","
-    strResults = strResults[0:len(strResults)-1]
-    
-    print(strResults)
+        strNames += i[1]+","
+        strIds += str(i[0]) + ","
+    strNames = strNames[0:len(strNames)-1]
+    strIds = strIds[0:len(strIds)-1]
+    if strNames == "":
+        strNames = "No Results"
 
     return {
-        'Result':strResults
+        'Names':strNames,
+        'Ids':strIds
     }
 
 # Used to populate the dropdown menus on the browse page
