@@ -66,11 +66,9 @@ def search():
 
         # Getting the school id from the division table based on the division name
         if school != "":
-            print(school)
             statementTeacher = "SELECT divisionID FROM division WHERE divisionName='" + school + "'"
             cursor.execute(statementTeacher)
             schoolId = cursor.fetchall()[0][0]
-            print(schoolId)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -79,11 +77,9 @@ def search():
 
         # Getting the subject id from the Subjects table
         if department != "":
-            print(department)
             statementDepartment = "SELECT subjectId FROM subject WHERE subjectName='" + department + "'"
             cursor.execute(statementDepartment)
             subjectId = cursor.fetchall()[0][0]
-            print(subjectId)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -92,7 +88,6 @@ def search():
 
         # Getting the courses from the course info table based on the course name
         if course != "":
-            print(course)
             if statement == original:
                 statement+=" WHERE "
             if "=" in statement:
@@ -102,7 +97,6 @@ def search():
         # Getting the teacher id from the teacherName table based on the teacher name
         teacherCourses = []
         if teacher != "":
-            print(teacher)
             statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
             cursor.execute(statementTeacher)
             teacherId = cursor.fetchall()[0][0]
@@ -118,11 +112,9 @@ def search():
             statement+="courseID IN ("
             for i in teacherCourses:
                 statement+= i+", "
-            print(statement)
             statement = statement[:-2]
             statement+=")"
             
-        print(statement)
         cursor.execute(statement)
         results = cursor.fetchall()
 
@@ -130,7 +122,7 @@ def search():
         print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = "No Results "
+    strResults = ""
     for i in results:
         strResults += i[1] + ":" + str(i[0]) + ","
     strResults = strResults[0:len(strResults)-1]
@@ -142,7 +134,7 @@ def search():
     }
 
 # Used to populate the dropdown menus on the browse page
-@app.route('/populate')
+@app.route('/populate', methods={'POST'})
 def populate():
     # Connecting to the server
     dataBase = connectToData()

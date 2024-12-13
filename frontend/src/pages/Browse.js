@@ -16,7 +16,10 @@ function Browse() {
   });
 
   useEffect(() => {
-    fetch("/populate").then((res) =>
+    fetch("/populate", {method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }}).then((res) =>
       res.json().then((data) => {
         console.log(data.Divisions)
         setDropdowns({
