@@ -21,7 +21,6 @@ function Browse() {
         'Content-Type': 'application/x-www-form-urlencoded'
       }}).then((res) =>
       res.json().then((data) => {
-        console.log(data.Divisions)
         setDropdowns({
           divisions: data.Divisions.split("'").join("").split(", "),
           subjects: data.Subjects.split("'").join("").split(", "),
