@@ -156,22 +156,24 @@ def populate():
     divisions = []
     for x in cursor.fetchall():
         divisions.append(x[0].replace("'", ""))
+
     statement = "SELECT subjectName FROM subject"
     cursor.execute(statement)
     subjects = []
     for x in cursor.fetchall():
         subjects.append(x[0].replace("'", ""))
+
     statement = "SELECT courseName FROM CourseInfo"
     cursor.execute(statement)
     courses = []
     for x in cursor.fetchall():
         courses.append(x[0].replace("'", ""))
+
     statement = "SELECT teacherName FROM teacherName"
     cursor.execute(statement)
     teachers = []
     for x in cursor.fetchall():
         teachers.append(x[0].replace("'", ""))
-
     return {
         'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
         'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
@@ -256,4 +258,4 @@ def addCourse():
     #dataBase.commit()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
