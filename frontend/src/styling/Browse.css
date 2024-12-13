@@ -1,3 +1,12 @@
+.thing {
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    height: 400px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+  }
+
 .Browse {
     text-align: left;
     position: fixed;
