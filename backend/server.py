@@ -122,7 +122,7 @@ def search():
         print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = ""
+    strResults = " "
     for i in results:
         strResults += i[1] + ":" + str(i[0]) + ","
     strResults = strResults[0:len(strResults)-1]
