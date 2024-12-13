@@ -15,6 +15,8 @@ function Browse() {
     teachers: []
   });
 
+  var potato = "";
+
   useEffect(() => {
     fetch("/populate", {method: 'POST',
       headers: {
@@ -29,7 +31,7 @@ function Browse() {
         })
       })
     )
-  }, [dropdowns])
+  }, [potato])
 
   // Set initial state for selected options in each dropdown
   const [selectedOption1, setSelectedOption1] = useState('');
@@ -42,8 +44,6 @@ function Browse() {
   // const dropdownOptions2 = ['English', 'Math', 'History', 'More Subjects'];
   // const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
   // const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
-
-  console.log(dropdowns)
 
   /* FIX THESE SOMEHOW THERE IS SOMETHING TERRIBLY WRONG WITH DROPDOWNS */
   const dropdownOptions1 = dropdowns.divisions;
@@ -111,8 +111,6 @@ function Browse() {
     })
     .then((res) => res.json())
     .then(data => {
-      console.log(searchParameters.input)
-      console.log(data);
       setdata({
         result: data.Result
       })
