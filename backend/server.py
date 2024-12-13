@@ -97,6 +97,8 @@ def search():
 
         # Getting the teacher id from the teacherName table based on the teacher name
         teacherCourses = []
+        currTeacher = teacher.split(" ")
+        teacher = currTeacher[1] + ", " + currTeacher[0]
         if teacher != "":
             statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
             cursor.execute(statementTeacher)
@@ -173,7 +175,12 @@ def populate():
     cursor.execute(statement)
     teachers = []
     for x in cursor.fetchall():
-        teachers.append(x[0].replace("'", ""))
+        currTeacherList = x[0].replace("'", "").split(", ")
+        if len(currTeacherList) >= 2:
+            currTeacher = currTeacherList[1] + " " + currTeacherList[0]
+        else:
+            currTeacher = currTeacherList[0]
+        teachers.append(currTeacher)
     return {
         'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
         'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
