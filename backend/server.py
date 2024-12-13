@@ -104,7 +104,7 @@ def search():
         'Result':strResults
     }
 
-@app.route('/')
+@app.route('/populate')
 def populate():
     # Connecting to the server
     dataBase = connectToData()
