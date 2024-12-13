@@ -131,12 +131,12 @@ def populate():
     teachers = []
     for x in cursor.fetchall():
         teachers.append(x[0].replace("'", ""))
-    print(teachers)
+
     return {
-        'Divisions':divisions, 
-        'Subjects':subjects,
-        'Courses':courses,
-        'Teachers':teachers
+        'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
+        'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
+        'Courses':str(courses).removeprefix("[").removesuffix("]"),
+        'Teachers':str(teachers).removeprefix("[").removesuffix("]")
     }
 
 
