@@ -122,7 +122,7 @@ function Browse() {
       console.error('Error:', error);
     });
     showResults();
-  }, [searchParameters.input, data.names, data.ids]);
+  }, [searchParameters.input, data.names, data.ids, showResults]);
 
   let text = "<ul>";
   data.names.split(",").forEach(myFunction);

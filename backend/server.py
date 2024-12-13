@@ -257,5 +257,34 @@ def addCourse():
 
     #dataBase.commit()
 
+# Used to get all the details about a class
+@app.route("/getUnitInfo", methods=['POST'])
+def getInfo():
+    unitId = int(request.form['data'])
+    dataBase = connectToData()
+    cursor = dataBase.cursor()
+    cursor.execute("")
+    '''
+    Title
+    Duration
+    Standards
+    Objectives
+    Essential Questions
+    Unit Description
+    '''
+
+# Used to get all the details about a class
+@app.route("/getCourseInfo", methods=['POST'])
+def getInfo():
+    courseId = int(request.form['data'])
+    dataBase = connectToData()
+    cursor = dataBase.cursor()
+    cursor.execute("")
+    '''
+    Title
+    Teacher
+    Units
+    '''
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
