@@ -125,6 +125,7 @@ function Browse() {
   }, [searchParameters.input, data.names, data.ids, showResults]);
 
   let text = "<ul>";
+  // const idList = data.ids.split(",");
   data.names.split(",").forEach(myFunction);
   text += "</ul>";
 
@@ -133,7 +134,7 @@ function Browse() {
   }
 
   function myFunction(value) {
-    text += "<li>" + value + "</li>";
+    text += "<li><form method='post' action='/course-info'><input type='hidden' name='extra_submit_param' value='value'><button type='submit' name='submit_param' value={value} class='link-button'>" + {value} + "</button></input></form></li>";
   } 
 
   return (
