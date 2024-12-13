@@ -275,16 +275,27 @@ def getInfo():
 
 # Used to get all the details about a class
 @app.route("/getCourseInfo", methods=['POST'])
-def getInfo():
+def getCourseInfo():
     courseId = int(request.form['data'])
     dataBase = connectToData()
     cursor = dataBase.cursor()
-    cursor.execute("")
-    '''
-    Title
-    Teacher
-    Units
-    '''
+    cursor.execute("SELECT courseName FROM CourseInfo WHERE courseID='%i'" % courseId)
+    courseTitle = cursor.fetchall()[0][0]
+    cursor.execute("SELECT userID FROM courseTeacher WHERE courseID='%i'" % courseId)
+    userId = cursor.fetchall()[0][0]
+    cursor.execute("SELECT teacherName FROM teacherName WHERE userID='%i'" % int(userId))
+    teacherName = cursor.fetchall()[0][0]
+    cursor.exeucte("SELECT unitID, unitName FROM Unit WHERE courseID='%i'" % courseId)
+    unitInfo = cursor.fetchall()
+    unitIds = [unit[0] for unit in unitInfo]
+    unitNames = [unit[1] for unit in unitInfo]
+
+    return {
+        "Title":courseTitle,
+        "Teacher":teacherName,
+        "UnitIds":str(unitIds).removeprefix("[").removesuffix("]"),
+        "UnitNames":str(unitNames).removeprefix("[").removesuffix("]")
+    }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
