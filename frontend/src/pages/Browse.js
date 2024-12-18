@@ -90,10 +90,6 @@ function Browse() {
 
   useEffect(() => {
     if (!searchParameters.input) {
-      setdata({
-        names: '',
-        ids: ''
-      })
       return;
     }  // Don't fetch if input is empty
 
@@ -125,8 +121,13 @@ function Browse() {
   }, [searchParameters.input, data.names, data.ids, showResults]);
 
   let text = "<ul>";
-  // const idList = data.ids.split(",");
-  data.names.split(",").forEach(myFunction);
+  var idList = data.ids.split(",");
+  if (data.ids.length !== 0) {
+    console.log(data.ids);
+  }
+  // text += "<li>sup</li>";
+  // idList.forEach(myFunction);
+  text += "<li>{idList}</li>"
   text += "</ul>";
 
   function showResults() {
@@ -135,6 +136,7 @@ function Browse() {
 
   function myFunction(value) {
     text += "<li><form method='post' action='/course-info'><input type='hidden' name='extra_submit_param' value='value'><button type='submit' name='submit_param' value={value} class='link-button'>" + {value} + "</button></input></form></li>";
+    // text += <li>{value}</li>
   } 
 
   return (
