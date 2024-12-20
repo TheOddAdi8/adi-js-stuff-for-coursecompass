@@ -46,7 +46,6 @@ function Browse() {
   // const dropdownOptions3 = ['Course1', 'Course2', 'Course3'];
   // const dropdownOptions4 = ['Marcus Twyford', 'Teacher2', 'Teacher3'];
 
-  /* FIX THESE SOMEHOW THERE IS SOMETHING TERRIBLY WRONG WITH DROPDOWNS */
   const dropdownOptions1 = dropdowns.divisions;
   const dropdownOptions2 = dropdowns.subjects;
   const dropdownOptions3 = dropdowns.courses;
@@ -121,13 +120,14 @@ function Browse() {
   }, [searchParameters.input, data.names, data.ids, showResults]);
 
   let text = "<ul>";
-  var idList = data.ids.split(",");
-  if (data.ids.length !== 0) {
-    console.log(data.ids);
-  }
+  const nameList = (data.names || "").split(",");
+  const idList = (data.ids || "").split(",");
+  // if (data.ids.length !== 0) {
+  //   console.log(data.ids);
+  // }
   // text += "<li>sup</li>";
-  // idList.forEach(myFunction);
-  text += "<li>{idList}</li>"
+  nameList.forEach(myFunction);
+  // text += "<li>{idList}</li>"
   text += "</ul>";
 
   function showResults() {
@@ -135,7 +135,22 @@ function Browse() {
   }
 
   function myFunction(value) {
-    text += "<li><form method='post' action='/course-info'><input type='hidden' name='extra_submit_param' value='value'><button type='submit' name='submit_param' value={value} class='link-button'>" + {value} + "</button></input></form></li>";
+    // text += "<li><form method='post' action='/course-info'><input type='hidden' name='extra_submit_param' value='value'><button type='submit' name='submit_param' value={value} class='link-button'>" + {value} + "</button></input></form></li>";
+    var idValue = -1;
+    for (var i = 0; i < nameList.length; i++) {
+      if (nameList[i] === value) {
+        idValue = idList[i];
+      }
+    }
+    text += `
+    <li>
+      <form method="post" action="/course-info">
+        <input type="hidden" name="extra_submit_param" value="${idValue}">
+        <button type="submit" name="submit_param" value="${idValue}" class="link-button">
+          ${value}
+        </button>
+      </form>
+    </li>`;
     // text += <li>{value}</li>
   } 
 
