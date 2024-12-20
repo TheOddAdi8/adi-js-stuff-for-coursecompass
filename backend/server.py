@@ -57,49 +57,57 @@ def search():
     teacher = data[3]
     dataBase = connectToData()
     results = []
-    try:
-        # preparing a cursor object
-        cursor = dataBase.cursor()
-        # Prepares the initial sql query
-        statement = "SELECT * FROM CourseInfo"
-        original = statement
+    noResults = False
+    #try:
+    # preparing a cursor object
+    cursor = dataBase.cursor()
+    # Prepares the initial sql query
+    statement = "SELECT * FROM CourseInfo"
+    original = statement
 
-        # Getting the school id from the division table based on the division name
-        if school != "":
-            statementTeacher = "SELECT divisionID FROM division WHERE divisionName='" + school + "'"
-            cursor.execute(statementTeacher)
-            schoolId = cursor.fetchall()[0][0]
-            if statement == original:
-                statement+=" WHERE "
-            if "=" in statement:
-                statement += " AND "
-            statement+="divisionID='" + str(schoolId) + "'"
+    # Getting the school id from the division table based on the division name
+    if school != "":
+        statementSchool = "SELECT divisionID FROM division WHERE divisionName='" + school + "'"
+        cursor.execute(statementSchool)
+        schoolId = cursor.fetchall()[0][0]
+        if statement == original:
+            statement+=" WHERE "
+        if "=" in statement:
+            statement += " AND "
+        statement+="divisionID='" + str(schoolId) + "'"
 
-        # Getting the subject id from the Subjects table
-        if department != "":
-            statementDepartment = "SELECT subjectId FROM subject WHERE subjectName='" + department + "'"
-            cursor.execute(statementDepartment)
-            subjectId = cursor.fetchall()[0][0]
-            if statement == original:
-                statement+=" WHERE "
-            if "=" in statement:
-                statement += " AND "
-            statement+= "subjectID='" + str(subjectId) + "'"
+    # Getting the subject id from the Subjects table
+    if department != "":
+        statementDepartment = "SELECT subjectId FROM subject WHERE subjectName='" + department + "'"
+        cursor.execute(statementDepartment)
+        subjectId = cursor.fetchall()[0][0]
+        if statement == original:
+            statement+=" WHERE "
+        if "=" in statement:
+            statement += " AND "
+        statement+= "subjectID='" + str(subjectId) + "'"
 
-        # Getting the courses from the course info table based on the course name
-        if course != "":
-            if statement == original:
-                statement+=" WHERE "
-            if "=" in statement:
-                statement += " AND "
-            statement+="courseName='" + str(course) + "'"
+    # Getting the courses from the course info table based on the course name
+    if course != "":
+        if statement == original:
+            statement+=" WHERE "
+        if "=" in statement:
+            statement += " AND "
+        statement+="courseName='" + str(course) + "'"
 
-        # Getting the teacher id from the teacherName table based on the teacher name
-        teacherCourses = []
-        if teacher != "":
-            statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
-            cursor.execute(statementTeacher)
-            teacherId = cursor.fetchall()[0][0]
+    # Getting the teacher id from the teacherName table based on the teacher name
+    teacherCourses = []
+    currTeacher = teacher.split(" ")
+    if len(currTeacher) > 1:
+        teacher = currTeacher[1] + ", " + currTeacher[0]
+    else:
+        teacher = currTeacher[0]
+    if teacher != "":
+        statementTeacher = "SELECT userID FROM teacherName WHERE teacherName='" + teacher + "'"
+        cursor.execute(statementTeacher)
+        teacherId = cursor.fetchall()[0][0]
+        cursor.execute("SELECT courseID FROM courseTeacher WHERE userID='%i'" % teacherId)
+        if len(cursor.fetchall()) != 0:
             statementTeacher = "SELECT courseID FROM courseTeacher WHERE userID='" + str(teacherId) + "'"
             cursor.execute(statementTeacher)
             for i in cursor.fetchall():
@@ -114,22 +122,30 @@ def search():
                 statement+= i+", "
             statement = statement[:-2]
             statement+=")"
+        else:
+            noResults = True
+        
+    if not noResults:
         cursor.execute(statement)
         results = cursor.fetchall()
 
-    except:
-        print("Error Getting Results")
+    # except:
+    #     print("Error Getting Results")
 
     # Formatting the course name and course ids into a string
-    strResults = " "
+    strNames = ""
+    strIds = ""
     for i in results:
-        strResults += i[1] + ":" + str(i[0]) + ","
-    strResults = strResults[0:len(strResults)-1]
-    
-    print(strResults)
+        strNames += i[1]+","
+        strIds += str(i[0]) + ","
+    strNames = strNames[0:len(strNames)-1]
+    strIds = strIds[0:len(strIds)-1]
+    if strNames == "":
+        strNames = "No Results"
 
     return {
-        'Result':strResults
+        'Names':strNames,
+        'Ids':strIds
     }
 
 # Used to populate the dropdown menus on the browse page
@@ -162,7 +178,12 @@ def populate():
     cursor.execute(statement)
     teachers = []
     for x in cursor.fetchall():
-        teachers.append(x[0].replace("'", ""))
+        currTeacherList = x[0].replace("'", "").split(", ")
+        if len(currTeacherList) >= 2:
+            currTeacher = currTeacherList[1] + " " + currTeacherList[0]
+        else:
+            currTeacher = currTeacherList[0]
+        teachers.append(currTeacher)
     return {
         'Divisions':str(divisions).removeprefix("[").removesuffix("]"), 
         'Subjects':str(subjects).removeprefix("[").removesuffix("]"),
@@ -245,6 +266,46 @@ def addCourse():
         cursor.execute("")
 
     #dataBase.commit()
+
+# Used to get all the details about a class
+@app.route("/getUnitInfo", methods=['POST'])
+def getInfo():
+    unitId = int(request.form['data'])
+    dataBase = connectToData()
+    cursor = dataBase.cursor()
+    cursor.execute("")
+    '''
+    Title
+    Duration
+    Standards
+    Objectives
+    Essential Questions
+    Unit Description
+    '''
+
+# Used to get all the details about a class
+@app.route("/getCourseInfo", methods=['POST'])
+def getCourseInfo():
+    courseId = int(request.form['data'])
+    dataBase = connectToData()
+    cursor = dataBase.cursor()
+    cursor.execute("SELECT courseName FROM CourseInfo WHERE courseID='%i'" % courseId)
+    courseTitle = cursor.fetchall()[0][0]
+    cursor.execute("SELECT userID FROM courseTeacher WHERE courseID='%i'" % courseId)
+    userId = cursor.fetchall()[0][0]
+    cursor.execute("SELECT teacherName FROM teacherName WHERE userID='%i'" % int(userId))
+    teacherName = cursor.fetchall()[0][0]
+    cursor.exeucte("SELECT unitID, unitName FROM Unit WHERE courseID='%i'" % courseId)
+    unitInfo = cursor.fetchall()
+    unitIds = [unit[0] for unit in unitInfo]
+    unitNames = [unit[1] for unit in unitInfo]
+
+    return {
+        "Title":courseTitle,
+        "Teacher":teacherName,
+        "UnitIds":str(unitIds).removeprefix("[").removesuffix("]"),
+        "UnitNames":str(unitNames).removeprefix("[").removesuffix("]")
+    }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
