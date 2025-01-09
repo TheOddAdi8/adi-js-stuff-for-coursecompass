@@ -23,6 +23,11 @@ const LessonPlanPage = () => {
     setFormData({ ...formData, [field]: value });
   };
 
+  const editorConfig = {
+    readonly: false,
+    toolbarButtonSize: "xsmall", // Set toolbar size to xsmall
+  };
+
   return (
     <div className="lesson-plan-container">
       <h1>Unit Overview</h1>
