@@ -1,26 +1,27 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import JoditEditor from "jodit-react";
-import '../styling/EditCourse.css';
+import "../styling/EditCourse.css";
 
 const LessonPlanPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     title: "Title",
     duration: "2021-04-05 to 2021-04-09",
-    standards: [
-      "Standard 1",
-      "Standard 2",
-      "Standard 3",
-    ],
-    learningObjective:
-      "Objectives",
+    standards: ["Standard 1", "Standard 2", "Standard 3"],
+    learningObjective: "Objectives",
     essentialQuestion: "Essential question",
-    lessonDescription:
-      "Unit description",
+    lessonDescription: "Unit description",
   });
 
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
+  };
+
+  const config = {
+    readonly: false,
+    toolbarButtonSize: "xsmall",
+    toolbarSticky: false,
+    toolbarStickyOffset: null,
   };
 
   return (
@@ -82,6 +83,7 @@ const LessonPlanPage = () => {
         {isEditing ? (
           <JoditEditor
             value={formData.learningObjective}
+            config={config}
             onBlur={(newContent) =>
               handleInputChange("learningObjective", newContent)
             }
@@ -96,6 +98,7 @@ const LessonPlanPage = () => {
         {isEditing ? (
           <JoditEditor
             value={formData.essentialQuestion}
+            config={config}
             onBlur={(newContent) =>
               handleInputChange("essentialQuestion", newContent)
             }
@@ -110,6 +113,7 @@ const LessonPlanPage = () => {
         {isEditing ? (
           <JoditEditor
             value={formData.lessonDescription}
+            config={config}
             onBlur={(newContent) =>
               handleInputChange("lessonDescription", newContent)
             }
